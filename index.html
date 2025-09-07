@@ -1,181 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DiagnoX AI | Health Symptom Analyzer</title>
-  
-  <!-- Fonts & Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link 
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" 
-    rel="stylesheet">
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  
-  <!-- Choices.js -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
-  
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {# Dynamically set the title based on the current view #}
+    {% if show_login %}
+        <title>Diagnox AI - Secure Login</title>
+    {% elif show_signup %}
+        <title>Sign Up | Diagnox AI</title>
+    {% else %}
+        <title>DiagnoX AI | Health Symptom Analyzer</title>
+    {% endif %}
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Choices.js (only needed for the main app) -->
+    {% if show_main_app %}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+    {% endif %}
+    
+    <!-- Link to the single, merged CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
 
-    <!-- Hero / Header -->
-    <header class="app-header">
-      <div class="logo-section">
-        <i class="ph-bold ph-activity logo"></i>
-        <h1 class="brand-title">DiagnoX AI</h1>
-      </div>
-      <p class="subtitle">
-        Your personal AI-powered health assistant.  
-        Analyze symptoms, get predictions, and make informed decisions.
-      </p>
-      <div class="hero-cta">
-        <a href="#symptom-form" class="primary-btn">
-          <i class="ph-bold ph-stethoscope"></i> Start Your Health Check
-        </a>
-      </div>
-    </header>
+    {# Jinja2 logic to conditionally render the correct page view #}
 
-    <!-- Main Card -->
-    <main>
-      <section class="glass-card main-card">
-        <form id="symptom-form" aria-label="Symptom Analyzer Form">
-          <div class="form-group">
-            <label for="symptoms" class="form-label">
-              <i class="ph ph-list-checks"></i>
-              Search & Select Symptoms
-            </label>
-            <select name="symptoms" id="symptoms" multiple required>
-              {% for symptom in symptoms %}
-                <option value="{{ symptom }}">
-                  {{ symptom.replace('_', ' ') | title }}
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-          
-          <button type="submit" id="predict-btn" class="primary-btn">
-            <span class="btn-text">Analyze Symptoms</span>
-            <div class="spinner hidden" aria-hidden="true"></div>
-          </button>
-        </form>
-
-        <!-- Result Section -->
-        <div id="result-container" class="hidden result-box" role="status"></div>
-      </section>
+    {% if show_login %}
+    <!-- ======================= LOGIN PAGE ======================= -->
+    <main class="auth-container">
+        <section class="branding-section">
+            <div class="branding-content">
+                <header class="branding-header">
+                    <i class="ph-fill ph-brain logo"></i>
+                    <h1>Diagnox AI</h1>
+                </header>
+                <div class="marketing-text">
+                    <h2>Welcome to the Future of Diagnostics.</h2>
+                    <p>Harnessing intelligent algorithms to predict, prevent, and protect your health with unparalleled accuracy.</p>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="ph-bold ph-check-circle"></i> Instant Symptom Analysis</li>
+                    <li><i class="ph-bold ph-check-circle"></i> High-Accuracy Predictions</li>
+                    <li><i class="ph-bold ph-check-circle"></i> Secure & Anonymous</li>
+                </ul>
+            </div>
+        </section>
+        <section class="form-section">
+            <div class="form-wrapper">
+                <div class="glass-card">
+                    <h2>Secure Member Login</h2>
+                    <form class="login-form" method="POST" action="{{ url_for('login') }}">
+                        <div class="input-group">
+                            <label for="username" class="sr-only">Username</label>
+                            <i class="ph ph-user"></i>
+                            <input type="text" id="username" name="username" placeholder="Username" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="password" class="sr-only">Password</label>
+                            <i class="ph ph-lock-simple"></i>
+                            <input type="password" id="password" name="password" placeholder="Password" required>
+                        </div>
+                        <div class="form-options">
+                            <a href="#" class="forgot-password">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="primary-btn full-width">
+                            <span>Sign In</span>
+                            <i class="ph-bold ph-arrow-right"></i>
+                        </button>
+                    </form>
+                    <p class="form-switcher-text">
+                        Don't have an account? <a href="{{ url_for('signup') }}">Sign Up Now</a>
+                    </p>
+                </div>
+                <footer class="auth-footer">
+                    &copy; 2025 Diagnox AI. All Rights Reserved.
+                </footer>
+            </div>
+        </section>
     </main>
 
-    <!-- Trusted Stats -->
-    <section class="glass-card stats-section">
-      <h2>Why Choose DiagnoX AI?</h2>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <i class="ph-bold ph-user-check"></i>
-          <h3>50,000+</h3>
-          <p>Users Trusted</p>
-        </div>
-        <div class="stat-box">
-          <i class="ph-bold ph-brain"></i>
-          <h3>95%+</h3>
-          <p>Prediction Accuracy</p>
-        </div>
-        <div class="stat-box">
-          <i class="ph-bold ph-clock"></i>
-          <h3>2 Sec</h3>
-          <p>Average Analysis Time</p>
-        </div>
-      </div>
-    </section>
+    {% elif show_signup %}
+    <!-- ======================= SIGNUP PAGE ======================= -->
+    <main class="auth-container">
+        <section class="branding-section">
+            <div class="branding-content">
+                <header class="branding-header">
+                    <i class="ph-fill ph-brain logo"></i>
+                    <h1>Diagnox AI</h1>
+                </header>
+                <div class="marketing-text">
+                    <h2>Join the Future of Diagnostics.</h2>
+                    <p>Create your secure account to harness intelligent algorithms that predict, prevent, and protect your health.</p>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="ph-bold ph-check-circle"></i> Instant Symptom Analysis</li>
+                    <li><i class="ph-bold ph-check-circle"></i> High-Accuracy Predictions</li>
+                    <li><i class="ph-bold ph-check-circle"></i> Secure & Anonymous</li>
+                </ul>
+            </div>
+        </section>
+        <section class="form-section">
+            <div class="form-wrapper">
+                <div class="glass-card">
+                    <h2>Create Your Account</h2>
+                    <form action="{{ url_for('signup') }}" method="POST" class="login-form">
+                        <div class="input-group">
+                            <label for="username" class="sr-only">Username</label>
+                            <i class="ph ph-user"></i>
+                            <input type="text" id="username" name="username" placeholder="Username" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="email" class="sr-only">Email Address</label>
+                            <i class="ph ph-envelope-simple"></i>
+                            <input type="email" id="email" name="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="password" class="sr-only">Password</label>
+                            <i class="ph ph-lock-simple"></i>
+                            <input type="password" id="password" name="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="primary-btn full-width">
+                            <span>Create Account</span>
+                            <i class="ph-bold ph-arrow-right"></i>
+                        </button>
+                    </form>
+                    <p class="form-switcher-text">
+                        Already have an account? <a href="{{ url_for('login') }}">Sign In</a>
+                    </p>
+                </div>
+                <footer class="auth-footer">
+                    &copy; 2025 Diagnox AI. All Rights Reserved.
+                </footer>
+            </div>
+        </section>
+    </main>
 
-    <!-- Info Sections -->
-    <section class="content-section">
-      <article class="glass-card content-card">
-        <i class="ph-bold ph-robot content-icon"></i>
-        <h2>How It Works</h2>
-        <p>
-          DiagnoX AI leverages a highly accurate <strong>Random Forest model</strong>, trained on thousands of anonymized patient records.  
-          Your selected symptoms are analyzed against medical patterns to predict the most likely health condition.
-        </p>
-      </article>
+    {% elif show_main_app %}
+    <!-- ======================= MAIN APPLICATION PAGE ======================= -->
+    <div class="container">
+        <header class="app-header">
+            <div class="logo-section">
+                <i class="ph-bold ph-activity logo"></i>
+                <h1 class="brand-title">DiagnoX AI</h1>
+            </div>
+            <p class="subtitle">
+                Welcome, <strong>{{ user }}</strong>! Your personal health assistant is ready.
+            </p>
+             <div class="header-actions">
+                <a href="#symptom-form" class="primary-btn">
+                    <i class="ph-bold ph-stethoscope"></i> Start Health Check
+                </a>
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="ph-bold ph-sign-out"></i> Logout
+                </a>
+            </div>
+        </header>
 
-      <article class="glass-card content-card">
-        <i class="ph-bold ph-gear-six content-icon"></i>
-        <h2>Features</h2>
-        <ul class="feature-list">
-          <li><i class="ph-fill ph-check-circle"></i> Instant Predictions in seconds.</li>
-          <li><i class="ph-fill ph-check-circle"></i> High Accuracy with validated models.</li>
-          <li><i class="ph-fill ph-check-circle"></i> Simple & Intuitive interface.</li>
-          <li><i class="ph-fill ph-check-circle"></i> Actionable Recommendations provided.</li>
-        </ul>
-      </article>
-    </section>
+        <main>
+            <section class="glass-card main-card">
+                <form id="symptom-form" aria-label="Symptom Analyzer Form">
+                    <div class="form-group">
+                        <label for="symptoms" class="form-label">
+                            <i class="ph ph-list-checks"></i>
+                            Search & Select Symptoms
+                        </label>
+                        <select name="symptoms" id="symptoms" multiple required>
+                            {% for symptom in symptoms %}
+                                <option value="{{ symptom }}">
+                                    {{ symptom.replace('_', ' ') | title }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" id="predict-btn" class="primary-btn full-width">
+                        <span class="btn-text">Analyze Symptoms</span>
+                        <div class="spinner hidden" aria-hidden="true"></div>
+                    </button>
+                </form>
+                <div id="result-container" class="hidden result-box" role="status"></div>
+            </section>
+        </main>
 
-    <!-- FAQ Section -->
-    <section class="glass-card faq-section">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-item">
-        <h3><i class="ph ph-question"></i> Is DiagnoX AI a replacement for doctors?</h3>
-        <p>No. DiagnoX AI is designed to assist with preliminary analysis and provide insights. Always consult a licensed healthcare professional for medical advice.</p>
-      </div>
-      <div class="faq-item">
-        <h3><i class="ph ph-question"></i> How accurate are the predictions?</h3>
-        <p>The model achieves over <strong>95% accuracy</strong> in controlled testing, but real-world results may vary depending on your symptoms.</p>
-      </div>
-      <div class="faq-item">
-        <h3><i class="ph ph-question"></i> Do you store my personal data?</h3>
-        <p>No. We respect your privacy — no personal data is stored or shared.</p>
-      </div>
-    </section>
+        <!-- All other sections from your original main page go here -->
+        <section class="glass-card stats-section">
+            <h2>Why Choose DiagnoX AI?</h2>
+            <div class="stats-grid">
+                <div class="stat-box"><i class="ph-bold ph-user-check"></i><h3>50,000+</h3><p>Users Trusted</p></div>
+                <div class="stat-box"><i class="ph-bold ph-brain"></i><h3>95%+</h3><p>Prediction Accuracy</p></div>
+                <div class="stat-box"><i class="ph-bold ph-clock"></i><h3>2 Sec</h3><p>Average Analysis Time</p></div>
+            </div>
+        </section>
 
-    <!-- Disclaimer Section -->
-    <section class="glass-card disclaimer-section">
-      <i class="ph-bold ph-warning-circle"></i>
-      <h2>Important Disclaimer</h2>
-      <p>
-        DiagnoX AI provides predictions for educational and informational purposes only.  
-        It does not replace professional medical consultation.  
-        If you feel unwell, please seek immediate advice from a healthcare provider.
-      </p>
-    </section>
+        <section class="content-section">
+            <article class="glass-card content-card"><i class="ph-bold ph-robot content-icon"></i><h2>How It Works</h2><p>DiagnoX AI leverages a highly accurate <strong>Random Forest model</strong>, trained on thousands of anonymized patient records. Your selected symptoms are analyzed against medical patterns to predict the most likely health condition.</p></article>
+            <article class="glass-card content-card"><i class="ph-bold ph-gear-six content-icon"></i><h2>Features</h2><ul class="feature-list"><li><i class="ph-fill ph-check-circle"></i> Instant Predictions in seconds.</li><li><i class="ph-fill ph-check-circle"></i> High Accuracy with validated models.</li><li><i class="ph-fill ph-check-circle"></i> Simple & Intuitive interface.</li><li><i class="ph-fill ph-check-circle"></i> Actionable Recommendations provided.</li></ul></article>
+        </section>
+        
+        <footer class="main-footer">
+            <div class="footer-content"><p>Made with <span class="heart">❤️</span> by <strong>Vansh Malhotra</strong></p><div class="social-links"><a href="https://www.linkedin.com/in/vanshmalhotra1301/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph-bold ph-linkedin-logo"></i></a><a href="https://github.com/VanshMalhotra1301" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="ph-bold ph-github-logo"></i></a><a href="#" aria-label="Portfolio"><i class="ph-bold ph-globe"></i></a></div></div>
+            <p class="copyright">&copy; 2025 DiagnoX AI. All Rights Reserved.</p>
+        </footer>
+    </div>
+    {% endif %}
 
-    <!-- Contact Section -->
-    <section class="glass-card contact-section">
-      <h2>Contact Us</h2>
-      <p>Have questions or feedback? Reach out to us:</p>
-      <ul>
-        <li><i class="ph-bold ph-envelope"></i> support@diagnox.ai</li>
-        <li><i class="ph-bold ph-phone"></i> +91 98765 43210</li>
-      </ul>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-      <div class="footer-content">
-        <p>Made with <span class="heart">❤️</span> by <strong>Vansh Malhotra</strong></p>
-        <div class="social-links">
-          <a href="https://www.linkedin.com/in/vanshmalhotra1301/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-            <i class="ph-bold ph-linkedin-logo"></i>
-          </a>
-          <a href="https://github.com/VanshMalhotra1301" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-            <i class="ph-bold ph-github-logo"></i>
-          </a>
-          <a href="#" aria-label="Portfolio">
-            <i class="ph-bold ph-globe"></i>
-          </a>
-        </div>
-      </div>
-      <p class="copyright">
-        &copy; 2025 DiagnoX AI. All Rights Reserved.
-      </p>
-    </footer>
-  </div>
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- Scripts -->
+    {% if show_main_app %}
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% endif %}
 </body>
 </html>
-
