@@ -77,10 +77,11 @@ def save_users_df(df):
 # --- AUTH ROUTES ---
 @app.route('/')
 def root():
-    """Redirects to the login page if not logged in, otherwise to home."""
-    if "user" in session:
-        return redirect(url_for('home'))
-    return redirect(url_for('login'))
+    """
+    DEVELOPMENT CHANGE: This now redirects directly to the main home page,
+    bypassing the login/signup flow completely.
+    """
+    return redirect(url_for('home'))
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -133,20 +134,34 @@ def logout():
     return redirect(url_for('login'))
 
 
-# --- PROTECTED HOME ROUTE ---
+# --- MAIN APPLICATION ROUTE ---
 @app.route('/home')
 def home():
-    if "user" not in session:
-        flash("🔒 You must be logged in to view that page.", "warning")
-        return redirect(url_for('login'))
-    return render_template('index.html', symptoms=symptoms, user=session['user'])
+    """
+    DEVELOPMENT CHANGE: The session check is removed to allow direct access,
+    bypassing the login requirement for development purposes.
+    The original logic is commented out below for easy restoration.
+    """
+    # --- Original protected route logic ---
+    # if "user" not in session:
+    #     flash("🔒 You must be logged in to view that page.", "warning")
+    #     return redirect(url_for('login'))
+    # return render_template('index.html', symptoms=symptoms, user=session['user'])
+
+    # --- New logic for direct access ---
+    return render_template('index.html', symptoms=symptoms, user='Guest') # Pass a default user
 
 
 # --- PREDICTION API ROUTE ---
 @app.route('/predict', methods=['POST'])
 def predict():
-    if "user" not in session:
-        return jsonify({'error': 'Authentication required.'}), 401
+    """
+    DEVELOPMENT CHANGE: The session check is removed to allow predictions
+    without needing to be logged in.
+    """
+    # --- Original protected API logic ---
+    # if "user" not in session:
+    #     return jsonify({'error': 'Authentication required.'}), 401
     
     if model is None or medications_df is None or not symptoms:
         return jsonify({'error': 'Server not configured properly. Please contact support.'}), 500
