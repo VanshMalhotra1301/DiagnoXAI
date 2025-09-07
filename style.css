@@ -1,43 +1,52 @@
 /* ---
-    Theme: IntelliCare Celestial v5
-    Author: Gemini (Enhanced Version)
-    Description: A premium dark theme with a multi-layered, interactive celestial background,
-                 shimmering glass UI, and polished micro-interactions.
+    Theme: DiagnoX AI Celestial (v2.0)
+    Description: A premium, performant, and bespoke design for the DiagnoX AI application.
+                 Features a dark glassmorphism UI, a vibrant teal color scheme, and subtle,
+                 scroll-driven animations for a professional user experience.
 --- */
 
-/* --- CSS Variables --- */
+/* --- 🎨 CSS Variables --- */
 :root {
-    /* 🎨 IMPROVED: Added new accent colors for more depth */
     --primary-color: #00baa9;
     --primary-hover: #00d1c0;
     --primary-glow: rgba(0, 209, 192, 0.2);
-    --secondary-accent: #818cf8; /* For secondary glows */
 
-    /* Colors */
     --bg-start: #0f172a; /* Slate 900 */
-    --bg-mid: #1e293b;  /* Slate 800 */
-    --bg-end: #0c1322;
-    --card-bg: rgba(30, 41, 59, 0.5); /* Slate 700 with transparency */
-    --card-border: rgba(255, 255, 255, 0.08);
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-accent: var(--primary-color);
-    --accent-warning: #facc15;
+    --bg-mid: #1e293b;   /* Slate 800 */
+    --bg-end: #0c1222;
+    
+    --card-bg: rgba(30, 41, 59, 0.6);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-border-hover: rgba(255, 255, 255, 0.2);
 
-    /* Typography */
+    --input-bg: rgba(15, 23, 42, 0.8);
+
+    --text-primary: #f8fafc;     /* Slate 50 */
+    --text-secondary: #cbd5e1;  /* Slate 300 */
+    
+    --accent-warning: #facc15;  /* Yellow 400 */
+    --accent-danger: #ff4d4d;
+
     --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-
-    /* Effects */
-    --shadow-color: rgba(0, 0, 0, 0.5);
-    --border-gradient: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
     --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-    /* ✨ NEW: Mouse position variables for interactive aurora */
-    --mouse-x: 50%;
-    --mouse-y: 50%;
 }
 
-/* --- General & Body Styles --- */
+/* --- 🔮 Keyframes for Animations --- */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes spin { 
+    100% { transform: rotate(360deg); } 
+}
+
+/* --- 🌍 General & Body Styles --- */
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -51,234 +60,95 @@ body {
     color: var(--text-primary);
     background-color: var(--bg-start);
     margin: 0;
-    padding: 4rem 1rem;
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
     position: relative;
     overflow-x: hidden;
 
-    /* 🎨 IMPROVED: Multi-layered background with more dynamic gradient */
+    /* ✨ PREMIUM: High-quality static background for a celestial feel without lag. */
     background-image:
-        /* Layer 3: Twinkling Stars */
-        radial-gradient(1px 1px at 20% 30%, white, transparent),
-        radial-gradient(1px 1px at 80% 10%, white, transparent),
-        radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(2px 2px at 90% 80%, rgba(255,255,255,0.8), transparent),
-        radial-gradient(2px 2px at 10% 90%, white, transparent),
-        radial-gradient(2px 2px at 40% 50%, rgba(255,255,255,0.4), transparent),
-        /* Layer 2: Main Animated Gradient */
+        radial-gradient(circle at 15% 25%, rgba(255,255,255,0.04) 1px, transparent 1px),
+        radial-gradient(circle at 85% 10%, rgba(255,255,255,0.06) 1px, transparent 1px),
+        radial-gradient(circle at 50% 85%, rgba(255,255,255,0.05) 2px, transparent 2px),
         linear-gradient(160deg, var(--bg-start) 10%, var(--bg-mid) 50%, var(--bg-end) 90%);
-
-    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 400% 400%;
-    animation: animateGradient 25s ease infinite;
 }
 
-/* 🎨 IMPROVED: More fluid and organic gradient animation */
-@keyframes animateGradient {
-    0% { background-position: 0% 50%, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
-    50% { background-position: 100% 50%, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
-    100% { background-position: 0% 50%, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
-}
-
-/* ✨ NEW: Interactive aurora effect that follows the mouse */
+/* Static aurora glow for atmospheric depth */
 body::before {
     content: '';
     position: fixed;
-    top: var(--mouse-y);
-    left: var(--mouse-x);
+    top: -30%;
+    left: -20%;
     width: 800px;
     height: 800px;
-    background-image: radial-gradient(circle at center,
-        var(--primary-color) 0%,
-        var(--secondary-accent) 30%,
-        transparent 65%
-    );
-    transform: translate(-50%, -50%);
-    opacity: 0.15;
-    filter: blur(120px);
+    background-image: radial-gradient(var(--primary-color), transparent 70%);
+    opacity: 0.1;
+    filter: blur(150px);
     z-index: -1;
-    transition: top 0.5s ease-out, left 0.5s ease-out; /* Smooth follow effect */
+    pointer-events: none;
 }
 
-
-/* --- Container & Animations --- */
+/* --- 🏛️ Layout & Main Container --- */
 .container {
     width: 100%;
-    max-width: 750px;
-    z-index: 1;
-    animation: fadeIn 1s 0.2s ease-out forwards;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+    display: grid;
+    gap: 3rem;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* --- ✨ PREMIUM: Scroll-driven animations for all sections --- */
+.glass-card, .app-header {
+    animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-timeline: view();
+    animation-range: entry 5% cover 30%;
 }
 
-
-/* --- Header --- */
+/* --- 🚀 Header / Hero Section --- */
 .app-header {
     text-align: center;
-    margin-bottom: 3rem;
+    padding-bottom: 2rem;
 }
 
-.app-header .logo {
+.logo-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.logo {
     font-size: 3rem;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
-    filter: drop-shadow(0 0 25px var(--primary-color));
-    animation: pulseGlow 4s infinite ease-in-out;
+    text-shadow: 0 0 25px var(--primary-color);
 }
 
-@keyframes pulseGlow {
-    0%, 100% { filter: drop-shadow(0 0 20px var(--primary-color)); }
-    50% { filter: drop-shadow(0 0 35px var(--primary-hover)); }
-}
-
-.app-header h1 {
-    margin: 0;
+.brand-title {
     font-size: 2.75rem;
     font-weight: 800;
-    letter-spacing: -1px;
-    /* ✨ NEW: Gradient text effect */
-    background: linear-gradient(45deg, var(--text-primary), #bdc3c7);
+    margin: 0;
+    letter-spacing: -1.5px;
+    background: linear-gradient(45deg, var(--text-primary), var(--text-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.app-header p {
-    margin-top: 0.75rem;
-    color: var(--text-secondary);
+.subtitle {
     font-size: 1.15rem;
+    color: var(--text-secondary);
     max-width: 550px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto 2rem auto;
     line-height: 1.6;
 }
 
-
-/* --- Card Base Styles --- */
-.glass-card {
-    background: var(--card-bg);
-    border-radius: 24px;
-    padding: 2.5rem 3rem;
-    box-shadow: 0 25px 50px -12px var(--shadow-color);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid transparent; /* Fallback */
-    position: relative;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-/* 🎨 IMPROVED: Shimmering border effect */
-.glass-card::before {
-    content: '';
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    z-index: -1;
-    margin: -1px;
-    border-radius: inherit;
-    background: linear-gradient(160deg, var(--card-border), rgba(255,255,255,0.04), var(--primary-glow));
-    background-size: 200% 200%;
-    animation: shimmer 15s linear infinite;
-}
-
-.glass-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 35px 60px -15px var(--shadow-color);
-}
-
-@keyframes shimmer {
-    0% { background-position: 0% 0%; }
-    25% { background-position: 100% 100%; }
-    50% { background-position: 200% 0%; }
-    75% { background-position: 100% -100%; }
-    100% { background-position: 0% 0%; }
-}
-
-
-/* --- Main Form & Choices.js Custom Styling --- */
-.main-card {
-    margin-bottom: 3rem;
-}
-
-.form-group label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.form-group .ph {
-    font-size: 1.5rem;
-    color: var(--text-accent);
-}
-
-.choices { margin-top: 1rem; }
-
-.choices__inner {
-    background-color: rgba(15, 23, 42, 0.8);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    min-height: 50px;
-    transition: var(--transition-smooth);
-}
-
-.choices.is-focused .choices__inner {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-glow), inset 0 0 10px var(--primary-glow);
-}
-
-.choices__list--multiple .choices__item {
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-.choices__input {
-    background-color: transparent;
-    color: var(--text-primary);
-}
-
-.choices[data-type*="select-multiple"] .choices__button {
-    filter: brightness(0) invert(1);
-    opacity: 0.75;
-    transition: opacity 0.2s ease;
-}
-.choices[data-type*="select-multiple"] .choices__button:hover { opacity: 1; }
-
-.choices__list--dropdown {
-    background: #1e293b;
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    margin-top: 8px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    background-color: rgba(30, 41, 59, 0.8);
-}
-
-.choices__item--choice { color: var(--text-secondary); }
-
-.choices__item--choice.is-highlighted {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-
-/* --- Button & Spinner --- */
-#predict-btn {
-    display: flex;
+/* --- 💠 Button Styles --- */
+.primary-btn {
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    padding: 1rem;
-    margin-top: 2rem;
+    gap: 0.75rem;
+    padding: 0.85rem 1.75rem;
     border: none;
     background-color: var(--primary-color);
     color: white;
@@ -286,38 +156,31 @@ body::before {
     font-weight: 600;
     border-radius: 12px;
     cursor: pointer;
+    text-decoration: none;
     transition: var(--transition-smooth);
     position: relative;
     overflow: hidden;
-    z-index: 1;
 }
 
-/* ✨ NEW: Button shine hover effect */
-#predict-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 75%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.6s ease;
-    transform: skewX(-25deg);
+.primary-btn i {
+    font-size: 1.25rem;
 }
 
-#predict-btn:hover:not(:disabled)::before {
-    left: 120%;
-}
-
-#predict-btn:hover:not(:disabled) {
+.primary-btn:hover:not(:disabled) {
     background-color: var(--primary-hover);
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 10px 20px var(--primary-glow), 0 4px 6px rgba(0,0,0,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px -5px var(--primary-glow);
 }
 
-#predict-btn:disabled {
-    background-color: #005b54;
+.primary-btn:disabled {
+    background-color: #005a52;
     cursor: not-allowed;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#predict-btn {
+    width: 100%;
+    margin-top: 1.5rem;
 }
 
 .spinner {
@@ -328,160 +191,252 @@ body::before {
     height: 22px;
     animation: spin 1s linear infinite;
 }
-@keyframes spin { 100% { transform: rotate(360deg); } }
 
-
-/* --- Result Section --- */
-#result-container {
-    margin-top: 2.5rem;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-#result-container:not(.hidden) {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.result-card {
-    background-color: rgba(15, 23, 42, 0.9);
-    border: 1px solid var(--primary-color);
+/* --- 🧊 Glass Card Base Style --- */
+.glass-card {
+    background: var(--card-bg);
+    border-radius: 24px;
     padding: 2.5rem;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0 0 50px var(--primary-glow);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 15px 30px -10px rgba(0,0,0,0.3);
+    transition: var(--transition-smooth);
 }
 
-.result-header {
+.glass-card:hover {
+    border-color: var(--card-border-hover);
+    transform: translateY(-5px);
+}
+
+/* --- 📝 Main Form Card --- */
+.main-card .form-label {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--text-secondary);
-    font-weight: 500;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
 }
-.result-header .ph { font-size: 1.25rem; }
+.main-card .form-label i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
 
-.result-body h2, .result-body h3, .result-body p { margin: 0; }
-.result-title, .suggestion-title {
+/* Choices.js Customization */
+.choices__inner {
+    background-color: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    min-height: 50px;
+    transition: var(--transition-smooth);
+}
+.choices.is-focused .choices__inner {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.choices__list--multiple .choices__item {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    color: white;
+}
+.choices__input { background-color: transparent; color: var(--text-primary); }
+.choices[data-type*="select-multiple"] .choices__button {
+    filter: brightness(2.5);
+    opacity: 0.8;
+}
+.choices__list--dropdown {
+    background-color: #1e293b;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-top: 8px;
+}
+.choices__item--choice.is-highlighted {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* --- 📊 Result Box --- */
+.result-box {
+    margin-top: 2rem;
+    padding: 2rem;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.7); /* Darker inner card */
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 0 40px var(--primary-glow);
+    animation: slideInUp 0.6s ease-out;
+}
+.result-header, .suggestion-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 1.5px;
+    margin-bottom: 0.5rem;
 }
-
+.result-header i, .suggestion-header i { font-size: 1.25rem; }
 #predicted-disease {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin: 0.5rem 0 2rem 0;
+    margin: 0.25rem 0 1.5rem 0;
     text-shadow: 0 0 20px var(--primary-glow);
 }
+#suggestion { font-size: 1.1rem; line-height: 1.7; }
 
-.suggestion-title { margin-bottom: 0.75rem; }
-
-#suggestion {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--text-primary);
+/* Confidence Score Bar */
+.confidence-section { margin-bottom: 1.5rem; }
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+.progress-fill {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.5s ease-out;
 }
 
-.disclaimer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+/* --- 📈 Stats Section --- */
+.stats-section h2, .faq-section h2, .disclaimer-section h2, .contact-section h2 {
     text-align: center;
-    margin-top: 2rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 2rem;
 }
-.disclaimer .ph { color: var(--accent-warning); }
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    text-align: center;
+}
+.stat-box i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+.stat-box h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+.stat-box p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0.25rem 0 0 0;
+}
 
-
-/* --- Content Sections --- */
+/* --- ℹ️ Content & Feature Sections --- */
 .content-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 4rem;
+    gap: 3rem;
 }
-
-/* ✨ NEW: Staggered animation for content cards */
-.content-card {
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out forwards;
-}
-.content-card:nth-child(1) { animation-delay: 0.4s; }
-.content-card:nth-child(2) { animation-delay: 0.6s; }
-
 .content-icon {
-    font-size: 2rem;
-    color: var(--text-accent);
+    font-size: 2.5rem;
+    color: var(--primary-color);
     margin-bottom: 1rem;
-    filter: drop-shadow(0 0 10px var(--primary-glow));
 }
 .content-card h2 {
     margin-top: 0;
     margin-bottom: 1rem;
-    color: var(--text-primary);
 }
 .content-card p, .content-card li {
     color: var(--text-secondary);
     line-height: 1.7;
 }
-.content-card ul {
-    padding-left: 0;
+.feature-list {
     list-style: none;
+    padding: 0;
     margin: 0;
-}
-.content-card li {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
     gap: 0.75rem;
-    margin-bottom: 0.75rem;
 }
-.content-card .ph-check-circle {
+.feature-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.feature-list .ph-check-circle {
     color: var(--primary-color);
     font-size: 1.25rem;
-    flex-shrink: 0;
-    margin-top: 2px;
 }
 
+/* --- ❓ FAQ Section --- */
+.faq-item {
+    border-top: 1px solid var(--card-border);
+    padding: 1.5rem 0;
+}
+.faq-section .faq-item:first-of-type { border-top: none; padding-top: 0; }
+.faq-section .faq-item:last-of-type { padding-bottom: 0; }
+.faq-item h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.faq-item p {
+    margin: 0;
+    color: var(--text-secondary);
+    padding-left: 2rem; /* Align with text above */
+}
 
-/* --- Footer --- */
+/* --- ⚠️ Disclaimer & Contact Sections --- */
+.disclaimer-section, .contact-section {
+    text-align: center;
+}
+.disclaimer-section {
+    background: rgba(250, 204, 21, 0.05); /* Yellow tint */
+    border-color: var(--accent-warning);
+}
+.disclaimer-section i.ph-warning-circle {
+    font-size: 3rem;
+    color: var(--accent-warning);
+    margin-bottom: 1rem;
+}
+.contact-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+.contact-section li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* --- 🦶 Footer --- */
 footer {
     text-align: center;
-    margin-top: 5rem;
-    padding-top: 2.5rem;
+    padding: 2rem 0 0 0;
     border-top: 1px solid var(--card-border);
-    opacity: 0;
-    animation: fadeIn 1s 1s ease-out forwards;
+    color: var(--text-secondary);
 }
-
-.footer-content p {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 0 0 1.5rem 0;
-}
-.footer-content .heart {
-    color: #e25555;
-    display: inline-block;
-    animation: beat 1.5s infinite ease-in-out;
-}
-@keyframes beat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-}
-
+.footer-content .heart { color: var(--accent-danger); }
 .social-links {
     display: flex;
     justify-content: center;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin: 1.5rem 0;
 }
 .social-links a {
     color: var(--text-secondary);
@@ -490,24 +445,22 @@ footer {
 }
 .social-links a:hover {
     color: var(--primary-color);
-    transform: translateY(-4px);
-    filter: drop-shadow(0 0 10px var(--primary-glow));
+    transform: translateY(-3px);
 }
+.copyright { font-size: 0.9rem; opacity: 0.7; }
 
-.copyright {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    opacity: 0.5;
-}
-
-
-/* --- Utility & Responsive --- */
-.hidden { display: none !important; }
-
+/* --- 📱 Responsive Design --- */
 @media (max-width: 768px) {
-    body { padding: 2.5rem 1rem; }
-    .glass-card { padding: 2rem 1.5rem; }
-    .content-section { grid-template-columns: 1fr; gap: 1.5rem; }
-    .app-header h1 { font-size: 2.25rem; }
-    #predicted-disease { font-size: 2rem; }
+    .container {
+        padding: 2.5rem 1rem;
+        gap: 2rem;
+    }
+    .brand-title { font-size: 2.25rem; }
+    .logo { font-size: 2.5rem; }
+    .glass-card { padding: 1.5rem; }
+    .stats-grid, .content-section { grid-template-columns: 1fr; }
+    #predicted-disease { font-size: 1.75rem; }
 }
+
+/* --- 🔧 Utility Classes --- */
+.hidden { display: none !important; }
