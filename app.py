@@ -11,8 +11,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ✨ DEPLOYMENT: Define explicit paths for templates and static files.
-# This ensures Flask knows where to find your HTML, CSS, and JS files,
-# which is crucial for deployment on platforms like GitHub Pages, Heroku, or Render.
+# This ensures Flask knows where to find your HTML, CSS, and JS files.
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
@@ -21,7 +20,6 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 
 # ⚠️ SECURITY: Always change this to a long, random, and secret string for production!
-# You can set this as an environment variable for better security.
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', "a-very-long-and-random-secret-key-should-go-here")
 
 
@@ -78,10 +76,12 @@ def save_users_df(df):
 @app.route('/')
 def root():
     """
-    DEVELOPMENT CHANGE: This now redirects directly to the main home page,
-    bypassing the login/signup flow completely.
+    If a user is in the session, go to the main app.
+    Otherwise, redirect to the login page.
     """
-    return redirect(url_for('home'))
+    if "user" in session:
+        return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -104,7 +104,8 @@ def signup():
         save_users_df(updated_users_df)
         flash("✅ Signup successful! You can now log in.", "success")
         return redirect(url_for('login'))
-    return render_template('signup.html')
+    # Renders the single index.html but tells it to show the signup form
+    return render_template('index.html', show_signup=True)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -124,7 +125,8 @@ def login():
 
         flash("❌ Invalid username or password. Please try again.", "danger")
         return redirect(url_for('login'))
-    return render_template('login.html')
+    # Renders the single index.html but tells it to show the login form
+    return render_template('index.html', show_login=True)
 
 
 @app.route('/logout')
@@ -138,30 +140,21 @@ def logout():
 @app.route('/home')
 def home():
     """
-    DEVELOPMENT CHANGE: The session check is removed to allow direct access,
-    bypassing the login requirement for development purposes.
-    The original logic is commented out below for easy restoration.
+    This is the main protected route for the symptom analyzer.
     """
-    # --- Original protected route logic ---
-    # if "user" not in session:
-    #     flash("🔒 You must be logged in to view that page.", "warning")
-    #     return redirect(url_for('login'))
-    # return render_template('index.html', symptoms=symptoms, user=session['user'])
-
-    # --- New logic for direct access ---
-    return render_template('index.html', symptoms=symptoms, user='Guest') # Pass a default user
+    if "user" not in session:
+        flash("🔒 You must be logged in to view that page.", "warning")
+        return redirect(url_for('login'))
+    
+    # Renders index.html, shows the main app, and passes symptom data.
+    return render_template('index.html', show_main_app=True, symptoms=symptoms, user=session['user'])
 
 
 # --- PREDICTION API ROUTE ---
 @app.route('/predict', methods=['POST'])
 def predict():
-    """
-    DEVELOPMENT CHANGE: The session check is removed to allow predictions
-    without needing to be logged in.
-    """
-    # --- Original protected API logic ---
-    # if "user" not in session:
-    #     return jsonify({'error': 'Authentication required.'}), 401
+    if "user" not in session:
+        return jsonify({'error': 'Authentication required.'}), 401
     
     if model is None or medications_df is None or not symptoms:
         return jsonify({'error': 'Server not configured properly. Please contact support.'}), 500
@@ -195,9 +188,6 @@ def predict():
 
 # --- Run Flask App ---
 if __name__ == '__main__':
-    # ✨ DEPLOYMENT: For production, a proper web server like Gunicorn or Waitress
-    # will be used to run this app. The host='0.0.0.0' makes it accessible
-    # from outside the container. The debug=True flag should be turned off in production.
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
 
