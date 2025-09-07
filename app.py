@@ -6,14 +6,26 @@ import pandas as pd
 import numpy as np
 import os
 
-# --- Initialize Flask ---
-app = Flask(__name__)
-# ⚠️ SECURITY: Always change this to a long, random, and secret string for production!
-# This key protects your user sessions from being tampered with.
-app.secret_key = "a-very-long-and-random-secret-key-should-go-here"
-
 # --- File Paths ---
+# Get the absolute path of the directory where this script is located.
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# ✨ DEPLOYMENT: Define explicit paths for templates and static files.
+# This ensures Flask knows where to find your HTML, CSS, and JS files,
+# which is crucial for deployment on platforms like GitHub Pages, Heroku, or Render.
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
+# --- Initialize Flask ---
+# Explicitly tell Flask where to find the template and static files.
+app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+
+# ⚠️ SECURITY: Always change this to a long, random, and secret string for production!
+# You can set this as an environment variable for better security.
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', "a-very-long-and-random-secret-key-should-go-here")
+
+
+# --- Model and Data Paths ---
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'disease_predictor.pkl')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 USERS_PATH = os.path.join(DATA_DIR, 'users.csv')
@@ -40,7 +52,6 @@ except Exception as e:
 
 try:
     train_df = pd.read_csv(os.path.join(DATA_DIR, 'Training.csv'))
-    # Clean up the common "Unnamed" column issue from CSVs
     if 'Unnamed: 133' in train_df.columns:
         train_df = train_df.drop('Unnamed: 133', axis=1)
     symptoms = train_df.drop('prognosis', axis=1).columns.tolist()
@@ -55,7 +66,6 @@ print("--- Initialization Complete ---")
 def get_users_df():
     """Safely reads the users CSV, creating it if it doesn't exist."""
     if not os.path.exists(USERS_PATH):
-        # ✨ IMPROVEMENT: Define columns for the new CSV, including the password hash
         pd.DataFrame(columns=['username', 'email', 'password_hash']).to_csv(USERS_PATH, index=False)
     return pd.read_csv(USERS_PATH)
 
@@ -79,31 +89,20 @@ def signup():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-
         users_df = get_users_df()
 
-        # Check if username or email already exists
         if users_df['username'].eq(username).any() or users_df['email'].eq(email).any():
             flash("❌ Username or email already exists. Please try another.", "danger")
             return redirect(url_for('signup'))
 
-        # ✨ CRITICAL SECURITY FIX: Hash the password before storing it
         password_hash = generate_password_hash(password)
-
-        # Create a new user record
         new_user = pd.DataFrame({
-            'username': [username],
-            'email': [email],
-            'password_hash': [password_hash]
+            'username': [username], 'email': [email], 'password_hash': [password_hash]
         })
-        
-        # Add the new user and save the file
         updated_users_df = pd.concat([users_df, new_user], ignore_index=True)
         save_users_df(updated_users_df)
-
         flash("✅ Signup successful! You can now log in.", "success")
         return redirect(url_for('login'))
-
     return render_template('signup.html')
 
 
@@ -112,13 +111,9 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-
         users_df = get_users_df()
-        
-        # Find the user by username
         user_record = users_df[users_df['username'] == username]
 
-        # ✨ CRITICAL SECURITY FIX: Check the hashed password
         if not user_record.empty:
             stored_hash = user_record.iloc[0]['password_hash']
             if check_password_hash(stored_hash, password):
@@ -126,10 +121,8 @@ def login():
                 flash(f"✅ Welcome back, {username}!", "success")
                 return redirect(url_for('home'))
 
-        # If user not found or password incorrect, show the same generic error
         flash("❌ Invalid username or password. Please try again.", "danger")
         return redirect(url_for('login'))
-
     return render_template('login.html')
 
 
@@ -146,14 +139,12 @@ def home():
     if "user" not in session:
         flash("🔒 You must be logged in to view that page.", "warning")
         return redirect(url_for('login'))
-    # This correctly passes the list of symptoms to your index.html template
     return render_template('index.html', symptoms=symptoms, user=session['user'])
 
 
 # --- PREDICTION API ROUTE ---
 @app.route('/predict', methods=['POST'])
 def predict():
-    # ✨ IMPROVEMENT: Check if user is logged in before allowing prediction
     if "user" not in session:
         return jsonify({'error': 'Authentication required.'}), 401
     
@@ -165,18 +156,15 @@ def predict():
         return jsonify({'error': 'Please select at least one symptom to analyze.'}), 400
 
     try:
-        # Create the input vector for the model
         input_data = np.zeros(len(symptoms))
         for symptom in selected_symptoms:
             if symptom in symptoms:
                 input_data[symptoms.index(symptom)] = 1
 
-        # Reshape for the model and predict
         prediction = model.predict(input_data.reshape(1, -1))[0]
         prediction_proba = model.predict_proba(input_data.reshape(1, -1))
         confidence = round(np.max(prediction_proba) * 100, 2)
 
-        # Find the corresponding suggestion from the medications dataframe
         suggestion_row = medications_df[medications_df['Disease'].str.lower() == prediction.lower()]
         suggestion = suggestion_row['Suggestion'].iloc[0] if not suggestion_row.empty else "Please consult a healthcare professional for personalized advice."
 
@@ -192,4 +180,9 @@ def predict():
 
 # --- Run Flask App ---
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # ✨ DEPLOYMENT: For production, a proper web server like Gunicorn or Waitress
+    # will be used to run this app. The host='0.0.0.0' makes it accessible
+    # from outside the container. The debug=True flag should be turned off in production.
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
+
