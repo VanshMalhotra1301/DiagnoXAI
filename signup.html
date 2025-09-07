@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Diagnox AI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+
+    <main class="main-container">
+
+        <section class="branding-section">
+            <div class="branding-content">
+                <header class="branding-header">
+                    <i class="ph-fill ph-brain logo"></i>
+                    <h1>Diagnox AI</h1>
+                </header>
+                <div class="marketing-text">
+                    <h2>Join the Future of Diagnostics.</h2>
+                    <p>Create your secure account to harness intelligent algorithms that predict, prevent, and protect your health.</p>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="ph-bold ph-check-circle"></i> Instant Symptom Analysis</li>
+                    <li><i class="ph-bold ph-check-circle"></i> High-Accuracy Predictions</li>
+                    <li><i class="ph-bold ph-check-circle"></i> Secure & Anonymous</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="login-section">
+            <div class="login-container">
+                <div class="glass-card">
+                    <h2>Create Your Account</h2>
+                    <form action="/signup" method="POST" class="login-form">
+                        
+                        <div class="input-group">
+                            <label for="username" class="sr-only">Username</label>
+                            <i class="ph ph-user"></i>
+                            <input type="text" id="username" name="username" placeholder="Username" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="email" class="sr-only">Email Address</label>
+                            <i class="ph ph-envelope-simple"></i>
+                            <input type="email" id="email" name="email" placeholder="Email Address" required>
+                        </div>
+                        
+                        <div class="input-group">
+                             <label for="password" class="sr-only">Password</label>
+                            <i class="ph ph-lock-simple"></i>
+                            <input type="password" id="password" name="password" placeholder="Password" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="confirm-password" class="sr-only">Confirm Password</label>
+                           <i class="ph ph-lock-key"></i>
+                           <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password" required>
+                       </div>
+
+                        <div class="form-options" style="justify-content: flex-start; font-size: 0.9rem; text-align: left;">
+                            <input type="checkbox" id="terms" name="terms" required style="margin-right: 10px; accent-color: var(--primary-color);">
+                            <label for="terms">I agree to the <a href="/terms" class="forgot-password" style="text-decoration: underline;">Terms & Conditions</a></label>
+                        </div>
+                        
+                        <button type="submit" class="btn">
+                            <span>Create Account</span>
+                            <i class="ph-bold ph-arrow-right"></i>
+                        </button>
+
+                    </form>
+
+                    <p class="signup-text">
+                        Already have an account? <a href="/login">Sign In</a>
+                    </p>
+                </div>
+                
+                <footer class="login-footer">
+                    &copy; 2025 Diagnox AI. All Rights Reserved.
+                </footer>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
